@@ -21,7 +21,12 @@ html,body{margin:0;height:100%;background:#0d0f14;color:var(--ink);overflow:hidd
 /* progress + controls */
 #bar{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.15);z-index:30}
 #bar i{display:block;height:100%;width:0;background:var(--sand)}
-#ctl{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:8px;z-index:50;opacity:.25;transition:opacity .2s}
+#ctl{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:8px;z-index:50;opacity:.25;transition:opacity .2s;flex-wrap:wrap;justify-content:center}
+@media(hover:none){#ctl{opacity:1}#ctl span{display:none}#ctl button{padding:12px 18px;font-size:16px}}
+#rotate{position:fixed;inset:0;display:none;place-items:center;background:#0d0f14;color:#fff;z-index:90;text-align:center;font-size:20px;padding:30px;line-height:1.6}
+@media(hover:none) and (orientation:portrait){#rotate{display:grid}}
+#tap{position:fixed;inset:0;display:grid;place-items:center;background:rgba(13,15,20,.85);color:#fff;z-index:80;cursor:pointer;font-size:28px;text-align:center}
+#tap b{display:block;font-size:44px;margin-bottom:10px}
 #ctl:hover{opacity:1}
 #ctl button{border:0;background:#fff;color:var(--ink);padding:8px 14px;border-radius:6px;font:inherit;cursor:pointer}
 /* shared UI bits */
@@ -78,6 +83,8 @@ html,body{margin:0;height:100%;background:#0d0f14;color:var(--ink);overflow:hidd
  <div id="cap"><div class="en" id="capEn"></div><div class="ar" id="capAr"></div></div>
  <div id="bar"><i id="barI"></i></div>
 </div></div>
+<div id="rotate">📱 ↻<br><b>Rotate your phone to landscape</b><br>to watch the School360 promo</div>
+<div id="tap" onclick="startPlay()"><div><b>▶</b>School360 Qatar — promo<br><span style="font-size:18px;opacity:.8">Tap to play · 79 seconds</span></div></div>
 <div id="ctl"><button onclick="toggle()" id="pp">Pause</button><button onclick="jump(-1)">◀ Prev</button><button onclick="jump(1)">Next ▶</button><button onclick="restart()">Restart</button><span style="color:#fff;font-size:12px;align-self:center;opacity:.8">Space = play/pause · ← → = scenes · F = fullscreen</span></div>
 <script>
 /* ---------- helpers ---------- */
@@ -166,7 +173,8 @@ function tick(){const done=SC.slice(0,i).reduce((a,s)=>a+s.dur,0)+(playing?Date.
 function toggle(){playing=!playing;$("#pp").textContent=playing?"Pause":"Play";if(playing){startedAt=Date.now()-elapsed;timer=setTimeout(()=>show(i+1),SC[i].dur-elapsed);tick()}else{clearTimeout(timer);elapsed=Date.now()-startedAt}}
 function jump(d){show(i+d)}function restart(){show(0)}
 addEventListener("keydown",e=>{if(e.code==="Space"){e.preventDefault();toggle()}if(e.key==="ArrowRight")jump(1);if(e.key==="ArrowLeft")jump(-1);if(e.key==="f"||e.key==="F")document.documentElement.requestFullscreen?.()});
-show(0);
+function startPlay(){document.getElementById("tap").style.display="none";playing=true;document.getElementById("pp").textContent="Pause";show(0);document.documentElement.requestFullscreen?.().catch(()=>{})}
+playing=false;show(0);clearTimeout(timer);
 </script>
 </body>
 </html>
